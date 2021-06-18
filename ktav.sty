@@ -1,0 +1,36 @@
+% ktav.sty
+%
+% A LuaLaTeX interface for writing Hebrew and related languages.
+
+\RequirePackage{iftex, expl3}
+
+% We must be using LuaLaTeX
+\RequireLuaTeX
+
+\RequirePackage{luacode}
+
+% Load the ktav module
+\directlua{dofile(kpse.find_file("ktav.lua"))}
+\directlua{require("ktav")}
+
+% Fonts
+\RequirePackage{fontspec}
+\AtBeginDocument{
+  \newfontfamily\hebfont{SBLBibLit}[Script=Hebrew]
+  % \let\hebfont\itshape
+}
+
+% Demo
+\RequirePackage{xcolor}
+
+\ExplSyntaxOn
+
+  \NewDocumentCommand\heb{m}{
+    \bgroup
+      \catcode`\^=12\relax % Allow for ^ in input
+      \textdir TRT\hebfont
+      \luaexec{tex.sprint(ktav.process_input(\luastringN{#1}))}
+    \egroup
+  }
+
+\ExplSyntaxOff
